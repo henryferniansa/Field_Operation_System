@@ -1,0 +1,36 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "field-operation-mobile",
+          "appId": "1:286545418200:android:a01840e9de008316a3c4ad",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "field-operation-mobile",
+          "configurations": {
+            "android": "1:286545418200:android:a01840e9de008316a3c4ad",
+            "ios": "1:286545418200:ios:d2bd15081f0aea06a3c4ad"
+          }
+        }
+      }
+    }
+  },
+  "hosting": {
+    "public": "build/web",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}

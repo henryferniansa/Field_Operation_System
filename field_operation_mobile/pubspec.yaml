@@ -1,0 +1,58 @@
+name: field_operation_mobile
+description: "A Flutter project for Operational INFRA LKB at Buhut"
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.7.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  firebase_core: ^4.4.0
+  firebase_auth: ^6.1.4
+  cloud_firestore: ^6.1.2
+  image_picker: ^1.2.1
+  firebase_storage: ^13.0.6
+  flutter_native_splash: ^2.4.6
+  flutter_local_notifications: ^19.5.0
+  firebase_messaging: ^16.1.1
+  intl: ^0.20.2
+  connectivity_plus: ^7.0.0
+  url_launcher: ^6.3.2
+  http: ^1.6.0
+  flutter_launcher_icons: ^0.14.4
+
+flutter_native_splash:
+  color: "#FFFFFF"
+  image: assets/logo.png
+  android_12:
+    image: assets/logo.png
+    color: "#FFFFFF"
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^5.0.0
+
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/logo.png"
+  min_sdk_android: 21
+  web:
+    generate: true
+    image_path: "assets/logo.png"
+    background_color: "#FFFFFF"
+    theme_color: "#FFFFFF"
+flutter:
+  uses-material-design: true
+  assets:
+     - assets/peta_proyek.png
+     - assets/logo.png
+     - assets/logo_perusahaan.png
