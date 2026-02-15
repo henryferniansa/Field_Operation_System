@@ -34,7 +34,7 @@ app = Flask(
 # ==============================================================================
 db = None
 try:
-    cred_path = resource_path("service_account.json")
+    cred_path = resource_path("field_operation_desktop/service_account.json")
     if not os.path.exists(cred_path):
         cred_path = resource_path("service_account.json")
 
