@@ -50,9 +50,22 @@ class _MyAppState extends State<MyApp> {
         primarySwatch: AppColors.primaryMaterial,
         primaryColor: AppColors.primary,
         scaffoldBackgroundColor: AppColors.surface,
-        colorScheme: ColorScheme.fromSeed(seedColor: AppColors.primary, surface: Colors.white),
-        appBarTheme: const AppBarTheme(backgroundColor: Colors.white, foregroundColor: Colors.black, elevation: 0, centerTitle: true),
-        elevatedButtonTheme: ElevatedButtonThemeData(style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, foregroundColor: Colors.white)),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: AppColors.primary,
+          surface: Colors.white,
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          elevation: 0,
+          centerTitle: true,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: Colors.white,
+          ),
+        ),
       ),
       home: const SplashScreen(),
     );
@@ -81,10 +94,18 @@ class RoleCheckPage extends StatelessWidget {
     return FutureBuilder<DocumentSnapshot>(
       future: FirebaseFirestore.instance.collection('users').doc(uid).get(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return const Scaffold(body: Center(child: CircularProgressIndicator()));
-        if (!snapshot.data!.exists) { FirebaseAuth.instance.signOut(); return const LoginPage(); }
+        if (!snapshot.hasData)
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        if (!snapshot.data!.exists) {
+          FirebaseAuth.instance.signOut();
+          return const LoginPage();
+        }
         final userData = snapshot.data!.data() as Map<String, dynamic>;
-        return userData['role'] == 'admin' ? const AdminPage() : const HomePageUser();
+        return userData['role'] == 'admin'
+            ? const AdminPage()
+            : const HomePageUser();
       },
     );
   }
