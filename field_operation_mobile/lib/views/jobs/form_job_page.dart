@@ -83,18 +83,18 @@ class _FormLaporanPageState extends State<FormLaporanPage> {
   // ==============================
   // DETEKSI SEGMENT (1280 x 720)
   // ==============================
-  String _detectSegment(double x, double y) {
-    final percentX = x / 1280;
+  String _detectSegment(double percentX) {
 
-    if (percentX >= 0.00 && percentX <= 0.15) return "JAB I-E";
-    if (percentX > 0.15 && percentX <= 0.30) return "JAB D-E";
-    if (percentX > 0.30 && percentX <= 0.45) return "JAB C-D";
-    if (percentX > 0.45 && percentX <= 0.65) return "JAB B-C";
-    if (percentX > 0.65 && percentX <= 0.85) return "JAB A-B";
-    if (percentX > 0.85) return "JAB 3";
+    if (percentX >= 0.00 && percentX <= 0.16) return "JAB I-E";
+    if (percentX > 0.16 && percentX <= 0.32) return "JAB D-E";
+    if (percentX > 0.32 && percentX <= 0.48) return "JAB C-D";
+    if (percentX > 0.48 && percentX <= 0.68) return "JAB B-C";
+    if (percentX > 0.68 && percentX <= 0.88) return "JAB A-B";
+    if (percentX > 0.88 && percentX <= 1.0) return "JAB 3";
 
     return "Unknown";
   }
+
 
   // ==============================
   // BUKA MAP (KEMBALI SEPERTI DULU)
@@ -112,9 +112,9 @@ class _FormLaporanPageState extends State<FormLaporanPage> {
     if (result != null) {
       final double x = result['x'];
       final double y = result['y'];
-      print("X: $x");
-      print("Y: $y");
-      final segment = _detectSegment(x, y);
+
+      final segment = _detectSegment(x);
+
 
       setState(() {
         _lokasiX = x;

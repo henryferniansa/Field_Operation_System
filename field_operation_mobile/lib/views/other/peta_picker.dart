@@ -30,7 +30,7 @@ class _PetaPickerPageState extends State<PetaPickerPage> {
       body: LayoutBuilder(builder: (context, constraints) {
         return InteractiveViewer(minScale: 1.0, maxScale: 4.0, child: Center(child: Builder(builder: (context) {
           return Stack(children: [
-            GestureDetector(onTapUp: _handleTapUp, child: Image.asset('assets/peta_proyek.jpeg  ', fit: BoxFit.contain, frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+            GestureDetector(onTapUp: _handleTapUp, child: Image.asset('assets/peta_proyek.jpeg', fit: BoxFit.contain, frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
               if (wasSynchronouslyLoaded || frame != null) {
                 WidgetsBinding.instance.addPostFrameCallback((_) { if(context.mounted) { final RenderBox? box = context.findRenderObject() as RenderBox?; if (box != null && box.hasSize) { if (_imgWidth != box.size.width || _imgHeight != box.size.height) { setState(() { _imgWidth = box.size.width; _imgHeight = box.size.height; }); } } } });
               } return child;
