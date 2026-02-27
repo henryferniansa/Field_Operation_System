@@ -8,7 +8,7 @@ from app import app
 
 def start_server():
     # Menjalankan server Flask di background
-    app.run(port=5000)
+    app.run(port=5000)  
 
 if __name__ == '__main__':
     # 1. Jalankan Flask di Thread terpisah (biar tidak memblokir aplikasi)

@@ -1,80 +1,88 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class JobController {
-  final CollectionReference _jobRef = FirebaseFirestore.instance.collection('laporan_lapangan');
+  final SupabaseClient _supabase;
+  final Connectivity _connectivity;
 
+  JobController({SupabaseClient? supabaseClient, Connectivity? connectivity})
+    : _supabase = supabaseClient ?? Supabase.instance.client,
+      _connectivity = connectivity ?? Connectivity();
+
+  // --- CHECK ONLINE ---
   Future<bool> isOnline() async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
+    final connectivityResult = await _connectivity.checkConnectivity();
     return !connectivityResult.contains(ConnectivityResult.none);
   }
 
   // --- TAMBAH LAPORAN ---
   Future<String> tambahLaporan(Map<String, dynamic> data) async {
     try {
-      // Timeout 2.5 detik agar UI tidak hang
-      try {
-        await _jobRef.add(data).timeout(const Duration(milliseconds: 2500));
-        return "Laporan Terkirim ke Server!";
-      } on TimeoutException {
-        return "Sinyal lambat. Disimpan di HP & dikirim otomatis nanti.";
-      } catch (e) {
-        return "Mode Offline. Disimpan di HP.";
-      }
-    } catch (e) {
-      rethrow;
+      await _supabase
+          .from('laporan_lapangan')
+          .insert(data)
+          .timeout(const Duration(milliseconds: 2500));
+
+      return "Laporan Terkirim ke Server!";
+    } on TimeoutException {
+      return "Sinyal lambat. Disimpan di HP & dikirim otomatis nanti.";
+    } catch (_) {
+      return "Mode Offline. Disimpan di HP.";
     }
   }
 
   // --- AMBIL TUGAS ---
   Future<void> ambilTugas(String docId) async {
-    final user = FirebaseAuth.instance.currentUser;
+    final user = _supabase.auth.currentUser;
     if (user == null) return;
 
     try {
-      final userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get(const GetOptions(source: Source.cache));
+      // Ambil data user dari tabel users
+      final response =
+          await _supabase
+              .from('users')
+              .select()
+              .eq('id', user.id)
+              .maybeSingle();
 
-      Map<String, dynamic> userData = userDoc.data() ?? {};
+      final userData = response ?? {};
 
-      if (userData.isEmpty) {
-        final serverDoc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-        userData = serverDoc.data() ?? {};
-      }
-
-      await _jobRef.doc(docId).update({
-        'id_pengawas': user.uid,
-        'nama_pengawas': userData['nama'] ?? "Petugas",
-        'jabatan_pengawas': userData['jabatan'] ?? "Lapangan",
-        'badge_pengawas': userData['badge_id'] ?? "-",
-        'status_pengerjaan': 'Sedang Dikerjakan',
-        'waktu_update': FieldValue.serverTimestamp(),
-      });
+      await _supabase
+          .from('laporan_lapangan')
+          .update({
+            'id_pengawas': user.id,
+            'nama_pengawas': userData['nama'] ?? "Petugas",
+            'jabatan_pengawas': userData['jabatan'] ?? "Lapangan",
+            'badge_pengawas': userData['badge_id'] ?? "-",
+            'status_pengerjaan': 'Sedang Dikerjakan',
+            'waktu_update': DateTime.now().toIso8601String(),
+          })
+          .eq('id', docId);
     } catch (e) {
       rethrow;
     }
   }
 
-  // --- HAPUS LAPORAN (BARU) ---
+  // --- HAPUS LAPORAN ---
   Future<void> hapusLaporan(String docId) async {
     try {
-      await _jobRef.doc(docId).delete();
+      await _supabase.from('laporan_lapangan').delete().eq('id', docId);
     } catch (e) {
       rethrow;
     }
   }
 
-  // --- SELESAIKAN PEKERJAAN (BARU) ---
+  // --- SELESAIKAN PEKERJAAN ---
   Future<void> selesaikanPekerjaan(String docId) async {
     try {
-      await _jobRef.doc(docId).update({
-        'status_pengerjaan': 'Selesai',
-        'waktu_selesai': FieldValue.serverTimestamp()
-      });
+      await _supabase
+          .from('laporan_lapangan')
+          .update({
+            'status_pengerjaan': 'Selesai',
+            'waktu_selesai': DateTime.now().toIso8601String(),
+          })
+          .eq('id', docId);
     } catch (e) {
       rethrow;
     }

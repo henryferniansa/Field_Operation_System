@@ -677,7 +677,7 @@
           </div>
 
           <img
-            src="{{ url_for('static', filename='peta_proyek.png') }}"
+            src="{{ url_for('static', filename='peta_proyek.jpeg') }}"
             class="map-img"
           />
           <div id="map-pins-layer"></div>
@@ -970,10 +970,8 @@
 
       async function loadData() {
         try {
-          const response = await fetch("/api/get_jobs");
-          allJobs = await response.json();
-
           const dateInput = document.getElementById("dateFilter");
+
           if (!dateInput.value) {
             const now = new Date();
             const year = now.getFullYear();
@@ -981,6 +979,11 @@
             const day = String(now.getDate()).padStart(2, "0");
             dateInput.value = `${year}-${month}-${day}`;
           }
+
+          const selectedDate = dateInput.value;
+
+          const response = await fetch(`/api/get_jobs?date=${selectedDate}`);
+          allJobs = await response.json();
 
           applyFilter();
         } catch (error) {
@@ -1432,8 +1435,32 @@
           }
         }
       });
-      setInterval(loadData, 5000);
-      loadData();
+      function startRealtime() {
+        const evtSource = new EventSource("/api/stream");
+
+        evtSource.onopen = function () {
+          console.log("Realtime connected");
+        };
+
+        evtSource.onmessage = function (event) {
+          console.log("Update received:", event.data);
+          loadData();
+        };
+
+        evtSource.onerror = function () {
+          console.log("Realtime error, reconnecting...");
+          evtSource.close();
+          setTimeout(startRealtime, 3000);
+        };
+      }
+      document.addEventListener("DOMContentLoaded", function () {
+        startRealtime();
+
+        const dateInput = document.getElementById("dateFilter");
+        dateInput.addEventListener("change", function () {
+          loadData(); // 🔥 reload dari server sesuai tanggal
+        });
+      });
     </script>
   </body>
 </html>

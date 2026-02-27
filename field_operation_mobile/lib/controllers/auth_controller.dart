@@ -1,29 +1,29 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthController {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final SupabaseClient _supabase;
 
-  // Fungsi Login
+  AuthController({SupabaseClient? supabaseClient})
+    : _supabase = supabaseClient ?? Supabase.instance.client;
+
+  // --- LOGIN ---
   Future<void> login(String badgeId, String password) async {
     try {
-      // Format email sesuai aturan bisnis aplikasi (badge_id@fieldops.com)
-      String email = "${badgeId.trim()}@fieldops.com";
+      // Format email sesuai aturan bisnis (badge_id@fieldops.com)
+      final email = "${badgeId.trim()}@fieldops.com";
 
-      await _auth.signInWithEmailAndPassword(
-          email: email,
-          password: password
-      );
+      await _supabase.auth.signInWithPassword(email: email, password: password);
     } catch (e) {
-      // Lempar error agar bisa ditangkap oleh UI (Login Page) untuk menampilkan Snackbar
+      // Tetap lempar error agar UI bisa tangkap dan tampilkan Snackbar
       rethrow;
     }
   }
 
-  // Fungsi Logout
+  // --- LOGOUT ---
   Future<void> logout() async {
-    await _auth.signOut();
+    await _supabase.auth.signOut();
   }
 
-  // Cek User saat ini
-  User? get currentUser => _auth.currentUser;
+  // --- CURRENT USER ---
+  User? get currentUser => _supabase.auth.currentUser;
 }
